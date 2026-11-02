@@ -20,6 +20,19 @@ describe("parseCosts", () => {
     expect(parseCosts(html)).toEqual(new Map([["Has Cost", 2.5]]));
   });
 
+  it("reads past a nested scores object between the name and the cost", () => {
+    const nested = (name: string, cost: string) =>
+      `{\\"slug\\":\\"s\\",\\"name\\":\\"${name}\\",\\"scores\\":{\\"scicode\\":0.46,\\"critpt\\":0.17},\\"intelligenceIndexCostPerTask\\":${cost}}`;
+    const noKey = `{\\"slug\\":\\"n\\",\\"name\\":\\"No Key\\",\\"scores\\":{\\"scicode\\":0.1}}`;
+    const html = `[${nested("Nested", "0.78")},${noKey},${nested("After", "4.47")}]`;
+    expect(parseCosts(html)).toEqual(
+      new Map([
+        ["Nested", 0.78],
+        ["After", 4.47],
+      ]),
+    );
+  });
+
   it("returns nothing for a page without model data", () => {
     expect(parseCosts("<html><body>maintenance</body></html>").size).toBe(0);
   });

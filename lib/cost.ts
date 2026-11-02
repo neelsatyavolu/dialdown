@@ -1,9 +1,11 @@
 const PAGE_URL = "https://artificialanalysis.ai/leaderboards/models";
 const USER_AGENT = "dialdown/0.1 (+https://dialitdown.vercel.app)";
-// The page listed 186 costed models on 2026-10-12; far fewer means its markup changed.
+// The page listed 186 costed models on 2026-10-12 and 80 on 2026-11-01; far fewer means its markup changed.
 const MIN_EXPECTED_COSTS = 50;
 
-const MODEL_COST = /"slug":"[^"]+","name":"([^"]+)"[^{}]*?"intelligenceIndexCostPerTask":([0-9.eE+-]+)/g;
+// Between a model's name and its cost there can be nested objects one level deep (its "scores"),
+// but never a closing brace of the model's own object, so a model without a cost cannot borrow the next one's.
+const MODEL_COST = /"slug":"[^"]+","name":"([^"]+)"(?:[^{}]|\{[^{}]*\})*?"intelligenceIndexCostPerTask":([0-9.eE+-]+)/g;
 
 // The leaderboard page embeds one JSON object per model. Cost per task is not in the data API,
 // so it is read from there and joined to the API entries by model name.
