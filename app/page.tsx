@@ -1,6 +1,7 @@
 import { getLeaderboard } from "@/lib/leaderboard";
 import { EFFORTS } from "@/lib/parse";
 import { FLOOR_RATIO, type Ladder, type Pick, type Rung } from "@/lib/rank";
+import { ThemeToggle } from "./theme-toggle";
 
 // Must be a literal for Next.js; keep in step with REVALIDATE_SECONDS.
 export const revalidate = 3600;
@@ -140,73 +141,81 @@ export default async function Page() {
   });
 
   return (
-    <main>
-      <header className="hero">
-        <span className="label">Dialdown / coding models</span>
-        <h1>
-          Dial the effort down<span className="caret">▏</span>
-        </h1>
-        <p className="prose">
-          Max effort tops every chart and empties every budget. This board takes every model at every effort level,
-          keeps the ones that still code near the top, and ranks them by how much score a dollar buys.
-        </p>
-        <ThePick pick={picks[0]} best={best} />
-      </header>
-
-      <section>
-        <div className="section-head">
-          <h2>Top 10</h2>
-          <span className="label">Updated {updated}</span>
+    <>
+      <nav className="nav">
+        <div className="nav-inner">
+          <span className="wordmark">
+            <i aria-hidden="true" />
+            Dialdown <span className="wordmark-sub">/ coding models</span>
+          </span>
+          <ThemeToggle />
         </div>
-        <TopTen picks={picks} />
-      </section>
+      </nav>
+      <main>
+        <header className="hero">
+          <h1>Dial the effort down</h1>
+          <p className="prose">
+            Max effort tops every chart and empties every budget. This board takes every model at every effort level,
+            keeps the ones that still code near the top, and ranks them by how much score a dollar buys.
+          </p>
+          <ThePick pick={picks[0]} best={best} />
+        </header>
 
-      <section>
-        <div className="section-head">
-          <h2>Effort ladder</h2>
-          <span className="label">Coding score and cost per task</span>
-        </div>
-        <Ladders ladders={ladders} />
-        <p className="ladder-note">
-          Blue marks a level in the top 10. Faded scores fall under the bar of {fixed(floor)}. An empty cell means
-          that level has not been rated.
-        </p>
-      </section>
-
-      <section>
-        <div className="section-head">
-          <h2>Method</h2>
-          <span className="label">{rated} rated entries</span>
-        </div>
-        <div className="method prose">
-          <ol>
-            <li>Each model at each effort level is its own entry.</li>
-            <li>Coding score is the average of Terminal-Bench 4.0 and SciCode.</li>
-            <li>
-              The bar is {FLOOR_RATIO * 100}% of the best score on the board: {fixed(floor)} today.
-            </li>
-            <li>Entries over the bar are ordered by coding score per dollar of cost per task.</li>
-          </ol>
-          <div>
-            <p>
-              Cost per task is what Artificial Analysis measured each entry spending, on average, on one task of
-              their Intelligence Index. It counts the reasoning tokens an effort level burns, which a price list
-              cannot show.
-            </p>
-            <p>
-              That index covers more than coding, so the cost is a general measure of how expensive an entry is to
-              run, set against a coding-only score.
-            </p>
+        <section>
+          <div className="section-head">
+            <h2>Top 10</h2>
+            <span className="label">Updated {updated}</span>
           </div>
-        </div>
-      </section>
+          <TopTen picks={picks} />
+        </section>
 
-      <footer>
-        <span className="label">
-          Data: <a href={SOURCE_URL}>Artificial Analysis</a>
-        </span>
-        <span className="label">Refreshed hourly</span>
-      </footer>
-    </main>
+        <section>
+          <div className="section-head">
+            <h2>Effort ladder</h2>
+            <span className="label">Coding score and cost per task</span>
+          </div>
+          <Ladders ladders={ladders} />
+          <p className="ladder-note">
+            Blue marks a level in the top 10. Faded scores fall under the bar of {fixed(floor)}. An empty cell means
+            that level has not been rated.
+          </p>
+        </section>
+
+        <section>
+          <div className="section-head">
+            <h2>Method</h2>
+            <span className="label">{rated} rated entries</span>
+          </div>
+          <div className="method prose">
+            <ol>
+              <li>Each model at each effort level is its own entry.</li>
+              <li>Coding score is the average of Terminal-Bench 4.0 and SciCode.</li>
+              <li>
+                The bar is {FLOOR_RATIO * 100}% of the best score on the board: {fixed(floor)} today.
+              </li>
+              <li>Entries over the bar are ordered by coding score per dollar of cost per task.</li>
+            </ol>
+            <div>
+              <p>
+                Cost per task is what Artificial Analysis measured each entry spending, on average, on one task of their
+                Intelligence Index. It counts the reasoning tokens an effort level burns, which a price list cannot
+                show.
+              </p>
+              <p>
+                That index covers more than coding, so the cost is a general measure of how expensive an entry is to
+                run, set against a coding-only score.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <span className="label">
+            Data: <a href={SOURCE_URL}>Artificial Analysis</a>
+          </span>
+          <span className="label">Refreshed hourly</span>
+        </footer>
+      </main>
+    </>
   );
 }
